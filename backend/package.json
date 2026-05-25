@@ -1,0 +1,29 @@
+{
+  "name": "webgis-sawit-backend",
+  "version": "1.0.0",
+  "description": "Express.js REST API untuk WebGIS Kelapa Sawit (Kelompok 8 — Analisis Spasial). Database: MySQL 8.0+ dengan built-in spatial functions.",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js"
+  },
+  "keywords": [
+    "webgis",
+    "mysql",
+    "spatial",
+    "express",
+    "kelapa-sawit",
+    "analisis-spasial"
+  ],
+  "author": "Kelompok 8",
+  "license": "MIT",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "mysql2": "^3.22.3"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.7"
+  }
+}
