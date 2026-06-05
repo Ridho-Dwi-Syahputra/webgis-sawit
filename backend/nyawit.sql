@@ -1,4 +1,4 @@
-﻿-- WebGIS Kelapa Sawit (Kelompok 8) - MySQL 8.0+ schema & seed
+-- WebGIS Kelapa Sawit (Kelompok 8) - MySQL 8.0+ schema & seed
 -- Source: digitasi blok perkebunan Palangka Raya, 250 titik pohon
 -- Catatan: pakai SRID 0 (default ST_GeomFromText tanpa argumen kedua) supaya tidak
 -- terkena axis-order swap MySQL pada EPSG:4326. Data tersimpan sebagai (X=longitude, Y=latitude).
@@ -21,8 +21,12 @@ CREATE TABLE IF NOT EXISTS titik_pohon (
     pohon_id INT,
     tree_class VARCHAR(50),
     confidence DECIMAL(4,2),
+    deskripsi TEXT DEFAULT NULL,
     geom POINT NOT NULL
 );
+
+-- Untuk database yang sudah ada, jalankan migration ini:
+-- ALTER TABLE titik_pohon ADD COLUMN deskripsi TEXT DEFAULT NULL;;
 
 INSERT INTO titik_pohon (pohon_id, tree_class, confidence, geom) VALUES (1, 'healthy', 0.88, ST_GeomFromText('POINT(113.90945197517841 -2.174149849426883)'));
 INSERT INTO titik_pohon (pohon_id, tree_class, confidence, geom) VALUES (2, 'small', 0.86, ST_GeomFromText('POINT(113.9108105969983 -2.165026207176079)'));

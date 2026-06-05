@@ -5,6 +5,7 @@ const router = express.Router();
 
 const VALID_CLASSES = new Set(['healthy', 'small', 'mismanaged', 'yellow', 'dead']);
 
+// GET /api/pohon — Semua pohon (GeoJSON), opsional filter ?class=
 router.get('/', async (req, res) => {
   try {
     const { class: treeClass } = req.query;
@@ -25,6 +26,7 @@ router.get('/', async (req, res) => {
         pohon_id,
         tree_class,
         confidence,
+        deskripsi,
         ST_AsGeoJSON(geom) AS geom_json
       FROM titik_pohon
       ${where};
@@ -40,6 +42,7 @@ router.get('/', async (req, res) => {
         pohon_id: r.pohon_id,
         tree_class: r.tree_class,
         confidence: r.confidence,
+        deskripsi: r.deskripsi || '',
       },
     }));
 
@@ -47,6 +50,69 @@ router.get('/', async (req, res) => {
   } catch (err) {
     console.error('GET /api/pohon error:', err);
     res.status(500).json({ error: 'Gagal mengambil data pohon', detail: err.message });
+  }
+});
+
+// GET /api/pohon/search?q= — Search pohon by pohon_id (number)
+router.get('/search', async (req, res) => {
+  try {
+    const { q } = req.query;
+    if (!q || q.trim() === '') {
+      return res.json([]);
+    }
+
+    const trimmed = q.trim();
+
+    // Search by pohon_id (partial match via LIKE on cast, or exact for numbers)
+    // Also search by tree_class partial match
+    const sql = `
+      SELECT
+        id,
+        pohon_id,
+        tree_class,
+        confidence,
+        deskripsi,
+        ST_X(geom) AS lng,
+        ST_Y(geom) AS lat
+      FROM titik_pohon
+      WHERE CAST(pohon_id AS CHAR) LIKE ?
+         OR tree_class LIKE ?
+         OR deskripsi LIKE ?
+      ORDER BY pohon_id ASC
+      LIMIT 10;
+    `;
+
+    const likeParam = `%${trimmed}%`;
+    const [rows] = await pool.query(sql, [likeParam, likeParam, likeParam]);
+
+    res.json(rows);
+  } catch (err) {
+    console.error('GET /api/pohon/search error:', err);
+    res.status(500).json({ error: 'Gagal mencari pohon', detail: err.message });
+  }
+});
+
+// PUT /api/pohon/:id — Update deskripsi pohon
+router.put('/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { deskripsi } = req.body;
+
+    if (deskripsi === undefined) {
+      return res.status(400).json({ error: 'Field "deskripsi" wajib diisi' });
+    }
+
+    const sql = `UPDATE titik_pohon SET deskripsi = ? WHERE id = ?`;
+    const [result] = await pool.query(sql, [deskripsi, id]);
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ error: 'Pohon tidak ditemukan' });
+    }
+
+    res.json({ success: true, id: Number(id), deskripsi });
+  } catch (err) {
+    console.error('PUT /api/pohon/:id error:', err);
+    res.status(500).json({ error: 'Gagal memperbarui deskripsi', detail: err.message });
   }
 });
 

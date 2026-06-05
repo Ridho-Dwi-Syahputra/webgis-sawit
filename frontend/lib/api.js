@@ -20,3 +20,18 @@ export async function getPohon(kelas) {
 export async function getStats() {
   return jsonOrThrow(await fetch(`${BASE}/stats`));
 }
+
+export async function searchPohon(q) {
+  if (!q || q.trim() === '') return [];
+  return jsonOrThrow(await fetch(`${BASE}/pohon/search?q=${encodeURIComponent(q.trim())}`));
+}
+
+export async function updatePohonDeskripsi(id, deskripsi) {
+  return jsonOrThrow(
+    await fetch(`${BASE}/pohon/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ deskripsi }),
+    })
+  );
+}
