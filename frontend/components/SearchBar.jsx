@@ -103,7 +103,7 @@ export default function SearchBar({ onSelectResult }) {
           onChange={(e) => setQuery(e.target.value)}
           onKeyDown={handleKeyDown}
           onFocus={() => results.length > 0 && setIsOpen(true)}
-          placeholder="Cari pohon (ID atau kelas)..."
+          placeholder="Cari pohon (ID atau kondisi)..."
           className="w-full rounded-lg border border-gray-200 bg-gray-50 py-2.5 pr-9 pl-9 text-sm text-gray-800 outline-none transition-colors focus:border-emerald-400 focus:bg-white focus:ring-2 focus:ring-emerald-400/20"
         />
         {query && (

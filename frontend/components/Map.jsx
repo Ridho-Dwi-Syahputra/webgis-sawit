@@ -5,7 +5,7 @@ import { MapContainer, TileLayer, GeoJSON, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import '@/lib/leaflet-icon-fix';
-import { CLASS_COLORS } from '@/lib/colors';
+import { CLASS_COLORS, CLASS_LABELS } from '@/lib/colors';
 import { getBlok, getPohon } from '@/lib/api';
 
 const DEFAULT_CENTER = [-2.1675, 113.9075];
@@ -64,7 +64,7 @@ function HighlightLayer({ pohonId, pohonData }) {
   return null;
 }
 
-export default function Map({ activeClasses, flyToTarget, selectedPohonId }) {
+export default function Map({ activeClasses, flyToTarget, selectedPohonId, onPohonClick, refreshKey }) {
   const [blok, setBlok] = useState(null);
   const [pohon, setPohon] = useState(null);
   const [error, setError] = useState(null);
@@ -81,7 +81,7 @@ export default function Map({ activeClasses, flyToTarget, selectedPohonId }) {
         if (alive) setError(err.message);
       });
     return () => { alive = false; };
-  }, []);
+  }, [refreshKey]);
 
   const pohonFiltered = useMemo(() => {
     if (!pohon) return null;
@@ -165,11 +165,25 @@ export default function Map({ activeClasses, flyToTarget, selectedPohonId }) {
               layer.bindPopup(
                 `<div class="text-sm">
                    <div class="font-semibold">Pohon #${p.pohon_id ?? '-'}</div>
-                   <div>Kelas: ${p.tree_class ?? '-'}</div>
+                   <div>Kondisi: ${CLASS_LABELS[p.tree_class] ?? p.tree_class ?? '-'}</div>
                    <div>Confidence: ${conf}</div>
                    ${p.deskripsi ? `<div class="mt-1 text-xs text-gray-500">${p.deskripsi}</div>` : ''}
                  </div>`
               );
+
+              // Click handler on marker to select it
+              layer.on('click', () => {
+                const latlng = layer.getLatLng ? layer.getLatLng() : null;
+                onPohonClick?.({
+                  id: p.id,
+                  pohon_id: p.pohon_id,
+                  tree_class: p.tree_class,
+                  confidence: p.confidence,
+                  deskripsi: p.deskripsi || '',
+                  lat: latlng?.lat || null,
+                  lng: latlng?.lng || null,
+                });
+              });
             }}
           />
         )}

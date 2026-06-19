@@ -13,6 +13,7 @@ export default function RightPanel({
   selectedPohon,
   onSearchSelect,
   onPohonUpdated,
+  refreshKey,
 }) {
   const [stats, setStats] = useState(null);
   const [error, setError] = useState(null);
@@ -25,7 +26,13 @@ export default function RightPanel({
       .then((s) => alive && setStats(s))
       .catch((err) => alive && setError(err.message));
     return () => { alive = false; };
-  }, []);
+  }, [refreshKey]);
+
+  useEffect(() => {
+    if (selectedPohon) {
+      setMobileOpen(true);
+    }
+  }, [selectedPohon]);
 
   const toggleClass = (key) => {
     const next = new Set(activeClasses);
@@ -100,7 +107,7 @@ export default function RightPanel({
               </div>
               <dl className="space-y-1 text-xs">
                 <div className="flex justify-between">
-                  <dt className="text-gray-500">Kelas</dt>
+                  <dt className="text-gray-500">Kondisi</dt>
                   <dd className="flex items-center gap-1.5 font-medium">
                     <span
                       className="inline-block h-2.5 w-2.5 rounded-full"
@@ -157,7 +164,7 @@ export default function RightPanel({
           {/* Filter */}
           <section className="mb-4 rounded-lg border border-gray-200 p-3">
             <div className="mb-2 flex items-center justify-between">
-              <h2 className="text-sm font-semibold">Filter Kelas Pohon</h2>
+              <h2 className="text-sm font-semibold">Filter Kondisi Pohon</h2>
               <button
                 type="button"
                 onClick={toggleAll}

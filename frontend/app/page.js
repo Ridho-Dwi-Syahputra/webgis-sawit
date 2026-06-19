@@ -21,6 +21,7 @@ export default function Home() {
   const [activeClasses, setActiveClasses] = useState(new Set(CLASS_KEYS));
   const [flyToTarget, setFlyToTarget] = useState(null);
   const [selectedPohon, setSelectedPohon] = useState(null);
+  const [refreshKey, setRefreshKey] = useState(0);
 
   const handleSearchSelect = useCallback((item) => {
     setFlyToTarget({ lat: item.lat, lng: item.lng, _ts: Date.now() });
@@ -33,10 +34,23 @@ export default function Home() {
     });
   }, []);
 
+  const handlePohonClick = useCallback((item) => {
+    setSelectedPohon({
+      id: item.id,
+      pohon_id: item.pohon_id,
+      tree_class: item.tree_class,
+      confidence: item.confidence,
+      deskripsi: item.deskripsi || '',
+    });
+  }, []);
+
   const handlePohonUpdated = useCallback((updated) => {
     setSelectedPohon((prev) =>
-      prev && prev.id === updated.id ? { ...prev, deskripsi: updated.deskripsi } : prev
+      prev && prev.id === updated.id
+        ? { ...prev, deskripsi: updated.deskripsi, tree_class: updated.tree_class }
+        : prev
     );
+    setRefreshKey((prev) => prev + 1);
   }, []);
 
   return (
@@ -46,6 +60,8 @@ export default function Home() {
           activeClasses={activeClasses}
           flyToTarget={flyToTarget}
           selectedPohonId={selectedPohon?.pohon_id}
+          onPohonClick={handlePohonClick}
+          refreshKey={refreshKey}
         />
       </div>
       <RightPanel
@@ -54,6 +70,7 @@ export default function Home() {
         selectedPohon={selectedPohon}
         onSearchSelect={handleSearchSelect}
         onPohonUpdated={handlePohonUpdated}
+        refreshKey={refreshKey}
       />
     </div>
   );

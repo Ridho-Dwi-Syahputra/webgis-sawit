@@ -26,12 +26,12 @@ export async function searchPohon(q) {
   return jsonOrThrow(await fetch(`${BASE}/pohon/search?q=${encodeURIComponent(q.trim())}`));
 }
 
-export async function updatePohonDeskripsi(id, deskripsi) {
+export async function updatePohon(id, data) {
   return jsonOrThrow(
     await fetch(`${BASE}/pohon/${id}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ deskripsi }),
+      body: JSON.stringify(data),
     })
   );
 }

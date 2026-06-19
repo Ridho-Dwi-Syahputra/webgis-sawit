@@ -35,7 +35,7 @@ const FEATURES = [
   {
     icon: Filter,
     title: 'Filter Interaktif',
-    desc: 'Pengguna dapat memfilter tampilan peta berdasarkan kelas kondisi pohon sehingga analisis visual dapat difokuskan pada aspek tertentu yang diminati.',
+    desc: 'Pengguna dapat memfilter tampilan peta berdasarkan kondisi pohon sehingga analisis visual dapat difokuskan pada aspek tertentu yang diminati.',
   },
   {
     icon: Search,
@@ -45,7 +45,7 @@ const FEATURES = [
   {
     icon: MapPin,
     title: 'Informasi Detail Pohon',
-    desc: 'Setiap titik pohon dapat diklik untuk melihat informasi lengkap termasuk ID pohon, kelas kondisi, tingkat kepercayaan klasifikasi, serta catatan deskriptif yang dapat diedit.',
+    desc: 'Setiap titik pohon dapat diklik untuk melihat informasi lengkap termasuk ID pohon, kondisi, tingkat kepercayaan klasifikasi, serta catatan deskriptif yang dapat diedit.',
   },
 ];
 
@@ -179,7 +179,7 @@ export default function TentangPage() {
             </div>
             <div className="rounded-lg bg-white p-3 ring-1 ring-gray-200">
               <div className="text-2xl font-bold text-emerald-600">5</div>
-              <div className="text-xs text-gray-500">Kelas Kondisi</div>
+              <div className="text-xs text-gray-500">Kondisi</div>
             </div>
             <div className="rounded-lg bg-white p-3 ring-1 ring-gray-200">
               <div className="text-2xl font-bold text-emerald-600">8.5</div>

@@ -92,27 +92,53 @@ router.get('/search', async (req, res) => {
   }
 });
 
-// PUT /api/pohon/:id — Update deskripsi pohon
+// PUT /api/pohon/:id — Update deskripsi dan/atau kelas pohon
 router.put('/:id', async (req, res) => {
   try {
     const { id } = req.params;
-    const { deskripsi } = req.body;
+    const { deskripsi, tree_class } = req.body;
 
-    if (deskripsi === undefined) {
-      return res.status(400).json({ error: 'Field "deskripsi" wajib diisi' });
+    if (deskripsi === undefined && tree_class === undefined) {
+      return res.status(400).json({ error: 'Harus menyertakan deskripsi atau tree_class untuk diperbarui' });
     }
 
-    const sql = `UPDATE titik_pohon SET deskripsi = ? WHERE id = ?`;
-    const [result] = await pool.query(sql, [deskripsi, id]);
+    if (tree_class !== undefined && !VALID_CLASSES.has(tree_class)) {
+      return res.status(400).json({
+        error: 'Kelas pohon tidak valid',
+        allowed: [...VALID_CLASSES],
+      });
+    }
+
+    const fields = [];
+    const params = [];
+
+    if (deskripsi !== undefined) {
+      fields.push('deskripsi = ?');
+      params.push(deskripsi);
+    }
+    if (tree_class !== undefined) {
+      fields.push('tree_class = ?');
+      params.push(tree_class);
+    }
+
+    params.push(id);
+
+    const sql = `UPDATE titik_pohon SET ${fields.join(', ')} WHERE id = ?`;
+    const [result] = await pool.query(sql, params);
 
     if (result.affectedRows === 0) {
       return res.status(404).json({ error: 'Pohon tidak ditemukan' });
     }
 
-    res.json({ success: true, id: Number(id), deskripsi });
+    res.json({
+      success: true,
+      id: Number(id),
+      ...(deskripsi !== undefined && { deskripsi }),
+      ...(tree_class !== undefined && { tree_class }),
+    });
   } catch (err) {
     console.error('PUT /api/pohon/:id error:', err);
-    res.status(500).json({ error: 'Gagal memperbarui deskripsi', detail: err.message });
+    res.status(500).json({ error: 'Gagal memperbarui data pohon', detail: err.message });
   }
 });
 
