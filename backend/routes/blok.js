@@ -18,7 +18,7 @@ router.get('/', async (req, res) => {
 
     const features = rows.map((r) => ({
       type: 'Feature',
-      geometry: r.geom_json ? JSON.parse(r.geom_json) : null,
+      geometry: r.geom_json ? (typeof r.geom_json === 'object' ? r.geom_json : JSON.parse(r.geom_json)) : null,
       properties: {
         id: r.id,
         nama_blok: r.nama_blok,
