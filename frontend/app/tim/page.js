@@ -21,7 +21,7 @@ const TEAM_MEMBERS = [
     name: 'Muhammad Abrar Rayva',
     role: 'Backend Developer',
     nim: '—',
-    avatar: '/team/abrar.jpg',
+    avatar: '/team/abrar.jpeg',
     initials: 'MA',
     gradient: 'from-blue-500 to-cyan-500',
     pesan:
